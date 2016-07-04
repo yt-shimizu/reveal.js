@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Map library sample</title>
+
+    <link rel="stylesheet" href="http://openlayers.org/en/v3.11.2/css/ol.css">
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <style>
+			article {
+				width: 80%;
+				margin: 0 auto;
+			}
+			.map {
+				width: 100%;
+				height: 400px;
+			}
+    </style>
+
+    <script src="http://openlayers.org/en/v3.11.2/build/ol.js" type="text/javascript"></script>
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+		<script src="https://cdn.rawgit.com/MatthewBarker/leaflet-wikipedia/master/example/bundle.js"></script>
+		<script src="http://frogcat.github.io/leaflet-tilelayer-mask/leaflet-tilelayer-mask.js"></script>
+  </head>
+
+  <body>
+    <section>
+      <article>
+        <h1>Earthquakes in KML</h1>
+        <div id="eq-kml" class="map"></div>
+      </article>
+
+      <article>
+        <h1>Leaflet Wikipedia</h1>
+        <div id="leaflet-wiki" class="map"></div>
+      </article>
+    </section>
+
+		<section>
+      <article>
+        <h1>leaflet-tilelayer-mask</h1>
+        <div id="leaflet-mask" class="map"></div>
+      </article>
+    </section>
+
+    <script>
+      window.onload = function() {
+				var zoom = 12;
+        var lat = 35.4750726;
+        var lng = 133.0673884;
+
+				// Earthquakes in KML
+				var styleCache = {};
+				var styleFunction = function(feature, resolution) {
+				  var name = feature.get('name');
+				  var magnitude = parseFloat(name.substr(2));
+				  var radius = 5 + 20 * (magnitude - 5);
+				  var style = styleCache[radius];
+				  if (!style) {
+				    style = [new ol.style.Style({
+				      image: new ol.style.Circle({
+				        radius: radius,
+				        fill: new ol.style.Fill({
+				          color: 'rgba(255, 153, 0, 0.4)'
+				        }),
+				        stroke: new ol.style.Stroke({
+				          color: 'rgba(255, 204, 0, 0.2)',
+				          width: 1
+				        })
+				      })
+				    })];
+				    styleCache[radius] = style;
+				  }
+				  return style;
+				};
+
+				var map = new ol.Map({
+				  layers: [
+						new ol.layer.Tile({
+						  source: new ol.source.Stamen({
+						    layer: 'toner'
+						  })
+						}),
+						new ol.layer.Vector({
+						  source: new ol.source.Vector({
+						    url: 'data/2012_Earthquakes_Mag5.kml',
+						    format: new ol.format.KML({
+						      extractStyles: false
+						    })
+						  }),
+						  style: styleFunction
+						})
+					],
+				  target: 'eq-kml',
+				  view: new ol.View({
+				    center: [0, 0],
+				    zoom: 2
+				  })
+				});
+
+				// Leaflet wikipedia
+				var lwiki = L.map('leaflet-wiki').setView([lat, lng], zoom);
+				L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+					detectRetina: true
+        }).addTo(lwiki);
+				L.layerGroup.wikipediaLayer({
+					target: '_blank',
+					url: 'https://ja.wikipedia.org/'
+				}).addTo(lwiki);
+
+
+				var fg = L.tileLayer.mask('http://www.finds.jp/ws/tmc/1.0.0/Kanto_Rapid-900913-L/{z}/{x}/{y}.png', {
+					attribution : '<a href="http://habs.dc.affrc.go.jp/">NIAES, NARO</a>'
+				});
+				var lmask = L.map('leaflet-mask').setView([35.6323, 139.768815], 17);
+				L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+					detectRetina: true
+        }).addTo(lmask);
+				L.tileLayer('http://cyberjapandata.gsi.go.jp/xyz/ort/{z}/{x}/{y}.jpg', {
+					attribution : '<a href="http://maps.gsi.go.jp/development/">GSI Ortho</a>'
+				}).addTo(lmask);
+				L.tileLayer.mask('http://www.finds.jp/ws/tmc/1.0.0/Kanto_Rapid-900913-L/{z}/{x}/{y}.png', {
+					attribution : '<a href="http://habs.dc.affrc.go.jp/">NIAES, NARO</a>',
+					maskWidth : 400,
+          maskHeight : 400
+				}).addTo(lmask);
+				lmask.on("mousemove", function(e) {
+					fg.setCenter(e.containerPoint.x, e.containerPoint.y);
+				}).zoomControl.setPosition("bottomright");
+      }
+    </script>
+  </body>
+</html>
