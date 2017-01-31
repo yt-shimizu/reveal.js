@@ -1,8 +1,4 @@
-## Amazon Redshift
-
----
-
-### (入門編)
+## Amazon Redshift（入門）
 
 ---
 ### Amazon Redshift とは
@@ -26,33 +22,33 @@
 
 ---
 
-![arc](files/20161212/arc.png)
+![arc](files/20170131/arc.png)
 
 ---
 #### Clusters（クラスタ）
 
-![arc1](files/20161212/arc-1.png)
+![arc1](files/20170131/arc-1.png)
 
 Redshift の管理単位
 
 ---
 #### Leader Node（リーダーノード）
 
-![arc2](files/20161212/arc-2.png)
+![arc2](files/20170131/arc-2.png)
 
 クライアント接続、クエリ解析、コンピュートノードへのタスク割当て
 
 ---
 #### Compute Node（コンピューティングノード）
 
-![arc3](files/20161212/arc-3.png)
+![arc3](files/20170131/arc-3.png)
 
 リーダーノードから受け取ったタスクを処理
 
 ---
 #### Node Slice（ノードスライス）
 
-![arc4](files/20161212/arc-4.png)
+![arc4](files/20170131/arc-4.png)
 
 1コアあたり一つ割り当て
 
@@ -72,13 +68,13 @@ Redshift の管理単位
 
 #### ノードタイプ / ノード数
 
-![nodes](files/20161212/nodes.png)
+![nodes](files/20170131/nodes.png)
 
 ---
 ### 列指向データストレージ
 
 ---
-![column](files/20161212/column.jpg)
+![column](files/20170131/column.jpg)
 
 * 行単位で更新、削除をするような処理 → ×
 * 列単位で集計するような処理 → ◯
@@ -88,7 +84,7 @@ Redshift の管理単位
 
 * PostgreSQL 8.0.2 ベース
 
-* psql などのクライアントがそのまま利用可能
+* psql などがそのまま利用可能
 
 ---
 #### ただし
@@ -109,7 +105,7 @@ delimiter '|' region 'us-west-2';
 ```
 
 ---
-### S3 からデータロードしてみる
+## デモ
 
 ---
 ### 今後は
@@ -123,6 +119,3 @@ delimiter '|' region 'us-west-2';
  + 分散キー
  + 列圧縮
 
-* データ運用
- + ANALYZE
- + VACUUM
