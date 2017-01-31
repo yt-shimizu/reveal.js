@@ -1,4 +1,4 @@
-## Amazon Redshift（入門）
+## Amazon Redshift
 
 ---
 ### Amazon Redshift とは
@@ -22,43 +22,43 @@
 
 ---
 
-![arc](files/20170131/arc.png)
+![arc](files/20170131/images/arc.png)
 
 ---
 #### Clusters（クラスタ）
 
-![arc1](files/20170131/arc-1.png)
+![arc1](files/20170131/images/arc-1.png)
 
 Redshift の管理単位
 
 ---
 #### Leader Node（リーダーノード）
 
-![arc2](files/20170131/arc-2.png)
+![arc2](files/20170131/images/arc-2.png)
 
 クライアント接続、クエリ解析、コンピュートノードへのタスク割当て
 
 ---
 #### Compute Node（コンピューティングノード）
 
-![arc3](files/20170131/arc-3.png)
+![arc3](files/20170131/images/arc-3.png)
 
 リーダーノードから受け取ったタスクを処理
 
 ---
 #### Node Slice（ノードスライス）
 
-![arc4](files/20170131/arc-4.png)
+![arc4](files/20170131/images/arc-4.png)
 
 1コアあたり一つ割り当て
 
 独立しているため、並列処理が可能
 
 ---
-### スケーリング（リサイズ）
+## スケーリング（リサイズ）
 
 ---
-#### クラスタタイプ
+### クラスタタイプ
 
 * シングルノード
 
@@ -66,15 +66,57 @@ Redshift の管理単位
 
 ---
 
-#### ノードタイプ / ノード数
+### ノードタイプ / ノード数
 
-![nodes](files/20170131/nodes.png)
+![nodes](files/20170131/images/nodes.png)
+
+---
+## 分散スタイル
+
+* 均等分散
+
+* キー分散
+
+* ALL分散
+
+---
+
+![style](files/20170131/images/redshift2.jpg)
+
+---
+### 均等分散
+
+* デフォルトの方式
+
+* ノードスライスのデータ数がほぼ均等になる様に分散
+
+* create table で diststyle EVEN を指定するか、何も指定しない
+
+* 結合を想定しないテーブルに適している
+
+---
+### キー分散
+
+* 分散キーを使って各ノードスライスへの配分を決定する（分散キーはテーブルに1つ）
+
+* create table で distkey(col) と指定する
+
+* 通常結合対象のキーに対して指定する
+
+---
+### ALL分散
+
+* テーブル全体がすべてのノードスライスにコピーされる
+
+* create table で diststyle ALL を指定
+
+* 更新頻度、範囲が低いテーブルに適している
 
 ---
 ### 列指向データストレージ
 
 ---
-![column](files/20170131/column.jpg)
+![column](files/20170131/images/column.jpg)
 
 * 行単位で更新、削除をするような処理 → ×
 * 列単位で集計するような処理 → ◯
@@ -105,17 +147,8 @@ delimiter '|' region 'us-west-2';
 ```
 
 ---
-## デモ
-
----
 ### 今後は
-* 分散スタイル
- + 均等分散
- + キー分散
- + ALL分散
-
-* チューニング
- + ソートキー
- + 分散キー
+* パフォーマンスチューニング
+ + ソートキー / 分散キー
  + 列圧縮
 
